@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Turbulence Risk Mapper</title>
+
+    <!-- Leaflet CSS -->
+    <link
+        rel="stylesheet"
+        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    />
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- ================= HEADER ================= -->
+
+<header class="topbar">
+
+    <div class="brand">
+        <div class="logo">✈</div>
+
+        <div>
+            <h1>Turbulence <span>Risk Mapper</span></h1>
+            <p>Safer Skies. Smarter Decisions.</p>
+        </div>
+    </div>
+
+    <div class="search-box">
+        🔍
+        <input
+            type="text"
+            placeholder="Search flight, airport or route..."
+        >
+    </div>
+
+    <div class="user">
+        🔔
+        <div class="avatar">GU</div>
+        <span>Guest User</span>
+    </div>
+
+</header>
+
+
+<!-- ================= SIDEBAR ================= -->
+
+<aside class="sidebar">
+
+    <div class="menu-item active">
+        🏠 <span>Dashboard</span>
+    </div>
+
+    <div class="menu-item">
+        ✈️ <span>Live Flights</span>
+    </div>
+
+    <div class="menu-item">
+        🗺️ <span>Risk Map</span>
+    </div>
+
+    <div class="menu-item">
+        🛫 <span>Route Analysis</span>
+    </div>
+
+    <div class="menu-item">
+        ☁️ <span>Weather</span>
+    </div>
+
+    <div class="menu-item">
+        📄 <span>Reports</span>
+    </div>
+
+    <div class="menu-item">
+        ⚙️ <span>Settings</span>
+    </div>
+
+    <div class="simulation">
+        <span class="dot"></span>
+        SIMULATED DATA
+    </div>
+
+</aside>
+
+
+<!-- ================= MAIN ================= -->
+
+<main class="main">
+
+    <!-- KPI CARDS -->
+
+    <section class="stats">
+
+        <div class="stat-card blue">
+            <div class="stat-icon">✈</div>
+            <div>
+                <p>Active Flights</p>
+                <h2 id="flightCount">1248</h2>
+                <small>↑ 12% vs last hour</small>
+            </div>
+        </div>
+
+
+        <div class="stat-card green">
+            <div class="stat-icon">🛡</div>
+            <div>
+                <p>Low Risk Zones</p>
+                <h2>68%</h2>
+                <small>↑ 5% vs last hour</small>
+            </div>
+        </div>
+
+
+        <div class="stat-card yellow">
+            <div class="stat-icon">⚠</div>
+            <div>
+                <p>Moderate Risk</p>
+                <h2>24%</h2>
+                <small>↑ 3% vs last hour</small>
+            </div>
+        </div>
+
+
+        <div class="stat-card red">
+            <div class="stat-icon">!</div>
+            <div>
+                <p>High Risk Zones</p>
+                <h2>8%</h2>
+                <small>↓ 2% vs last hour</small>
+            </div>
+        </div>
+
+
+        <div class="stat-card weather">
+            <div class="stat-icon">☁</div>
+            <div>
+                <p>Weather</p>
+                <h2>Mostly Clear</h2>
+                <small>Avg. Temp: -52°C at FL350</small>
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- MAP + FLIGHTS -->
+
+    <section class="dashboard-grid">
+
+        <!-- MAP -->
+
+        <div class="panel map-panel">
+
+            <div class="panel-header">
+
+                <h2>🌍 Turbulence Risk Map</h2>
+
+                <div class="filters">
+
+                    <select id="timeFilter">
+                        <option>Time: Now</option>
+                        <option>+1 Hour</option>
+                        <option>+3 Hours</option>
+                        <option>+6 Hours</option>
+                    </select>
+
+                    <select id="altitudeFilter">
+                        <option>Altitude: FL350</option>
+                        <option>FL250</option>
+                        <option>FL300</option>
+                        <option>FL400</option>
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div id="map"></div>
+
+            <div class="legend">
+
+                <span>Risk Level</span>
+
+                <div class="legend-gradient"></div>
+
+                <div class="legend-labels">
+                    <span>Low</span>
+                    <span>Moderate</span>
+                    <span>High</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- LIVE FLIGHTS -->
+
+        <div class="right-column">
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <h2>Live Flights</h2>
+                    <span class="live">
+                        ● LIVE
+                    </span>
+                </div>
+
+                <div class="flight-table">
+
+                    <div class="table-head">
+                        <span>Flight</span>
+                        <span>Altitude</span>
+                        <span>Speed</span>
+                        <span>Risk</span>
+                    </div>
+
+                    <div class="flight-row">
+                        <span>✈ BA215</span>
+                        <span>FL350</span>
+                        <span>468 kt</span>
+                        <span class="risk high">High</span>
+                    </div>
+
+                    <div class="flight-row">
+                        <span>✈ AI101</span>
+                        <span>FL320</span>
+                        <span>452 kt</span>
+                        <span class="risk moderate">Moderate</span>
+                    </div>
+
+                    <div class="flight-row">
+                        <span>✈ LH722</span>
+                        <span>FL370</span>
+                        <span>476 kt</span>
+                        <span class="risk low">Low</span>
+                    </div>
+
+                    <div class="flight-row">
+                        <span>✈ EK215</span>
+                        <span>FL340</span>
+                        <span>465 kt</span>
+                        <span class="risk moderate">Moderate</span>
+                    </div>
+
+                    <div class="flight-row">
+                        <span>✈ SQ318</span>
+                        <span>FL360</span>
+                        <span>478 kt</span>
+                        <span class="risk low">Low</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ALERTS -->
+
+            <div class="panel alerts">
+
+                <div class="panel-header">
+                    <h2>🔔 Recent Alerts</h2>
+                    <span class="view">View all →</span>
+                </div>
+
+                <div class="alert-item">
+                    <span class="alert-dot red-dot"></span>
+
+                    <div>
+                        <strong>High turbulence risk</strong>
+                        <p>FL350 near 34.2°N, 72.1°W</p>
+                        <small>5 min ago</small>
+                    </div>
+                </div>
+
+
+                <div class="alert-item">
+                    <span class="alert-dot orange-dot"></span>
+
+                    <div>
+                        <strong>Moderate route risk</strong>
+                        <p>Flight KL722</p>
+                        <small>12 min ago</small>
+                    </div>
+                </div>
+
+
+                <div class="alert-item">
+                    <span class="alert-dot yellow-dot"></span>
+
+                    <div>
+                        <strong>Strong winds detected</strong>
+                        <p>FL370 at 45.6°N, 12.8°E</p>
+                        <small>20 min ago</small>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- BOTTOM SECTION -->
+
+    <section class="bottom-grid">
+
+
+        <!-- RISK DISTRIBUTION -->
+
+        <div class="panel">
+
+            <h2>Risk Distribution</h2>
+
+            <div class="risk-chart">
+
+                <div class="donut">
+                    <div>
+                        <strong>1,248</strong>
+                        <small>Flights</small>
+                    </div>
+                </div>
+
+                <div class="risk-list">
+
+                    <div>
+                        <span class="green-circle"></span>
+                        Low
+                        <strong>68%</strong>
+                    </div>
+
+                    <div>
+                        <span class="yellow-circle"></span>
+                        Moderate
+                        <strong>24%</strong>
+                    </div>
+
+                    <div>
+                        <span class="red-circle"></span>
+                        High
+                        <strong>8%</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ALTITUDE -->
+
+        <div class="panel">
+
+            <h2>Turbulence Risk by Altitude</h2>
+
+            <div class="bars">
+
+                <div class="bar-item">
+                    <div class="bar bar-low" style="height: 35%"></div>
+                    <span>FL200</span>
+                </div>
+
+                <div class="bar-item">
+                    <div class="bar bar-low" style="height: 48%"></div>
+                    <span>FL250</span>
+                </div>
+
+                <div class="bar-item">
+                    <div class="bar bar-medium" style="height: 58%"></div>
+                    <span>FL300</span>
+                </div>
+
+                <div class="bar-item">
+                    <div class="bar bar-high" style="height: 82%"></div>
+                    <span>FL350</span>
+                </div>
+
+                <div class="bar-item">
+                    <div class="bar bar-medium" style="height: 50%"></div>
+                    <span>FL400</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- TREND -->
+
+        <div class="panel">
+
+            <h2>Risk Trend — Last 24 Hours</h2>
+
+            <div class="trend">
+
+                <div class="trend-line"></div>
+
+                <div class="trend-labels">
+                    <span>00:00</span>
+                    <span>06:00</span>
+                    <span>12:00</span>
+                    <span>18:00</span>
+                    <span>24:00</span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- QUICK ACTIONS -->
+
+        <div class="panel">
+
+            <h2>Quick Actions</h2>
+
+            <div class="quick-actions">
+
+                <button onclick="planRoute()">
+                    🛫
+                    <span>Plan New Route</span>
+                </button>
+
+                <button onclick="checkWeather()">
+                    ☁️
+                    <span>Check Weather</span>
+                </button>
+
+                <button onclick="viewReports()">
+                    📄
+                    <span>View Reports</span>
+                </button>
+
+                <button onclick="downloadData()">
+                    ⬇️
+                    <span>Download Data</span>
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ROUTE ANALYSIS -->
+
+    <section class="panel route-panel">
+
+        <div class="panel-header">
+            <h2>🛫 Route Risk Analysis</h2>
+        </div>
+
+        <div class="route-form">
+
+            <div>
+                <label>Origin</label>
+                <input
+                    id="origin"
+                    placeholder="e.g. Mumbai"
+                >
+            </div>
+
+            <div>
+                <label>Destination</label>
+                <input
+                    id="destination"
+                    placeholder="e.g. London"
+                >
+            </div>
+
+            <div>
+                <label>Altitude</label>
+
+                <select id="routeAltitude">
+                    <option>FL300</option>
+                    <option>FL320</option>
+                    <option>FL350</option>
+                    <option>FL370</option>
+                </select>
+
+            </div>
+
+            <button onclick="analyzeRoute()">
+                Analyze Route
+            </button>
+
+        </div>
+
+        <div
+            id="routeResult"
+            class="route-result hidden"
+        ></div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+
+    <footer>
+
+        Turbulence Risk Mapper v1.0.0
+
+        <span>Prototype • Simulated Data</span>
+
+        <span class="online">
+            ● System Online
+        </span>
+
+    </footer>
+
+</main>
+
+
+<!-- Leaflet JS -->
+
+<script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+<script src="script.js"></script>
+
+</body>
+</html>
